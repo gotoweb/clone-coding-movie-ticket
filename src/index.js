@@ -4,6 +4,9 @@ const NS = 'http://www.w3.org/2000/svg'
 
 document.querySelector('#svg-container').innerHTML = screen
 const lines = document.querySelectorAll('g')
+const elScroll = document.querySelector('#scroll')
+const elMinimap = document.querySelector('#minimap')
+const elThumb = document.querySelector('#thumb')
 
 const handleClick = e => {
   const el = e.target
@@ -41,7 +44,7 @@ lines.forEach((line, i) => {
     const zoomFactor = 2.1315
 
     elText.setAttribute('x', position.x * zoomFactor + 19)
-    elText.setAttribute('y', position.y * zoomFactor + 25)
+    elText.setAttribute('y', position.y * zoomFactor - 30)// + 25)
     elText.setAttribute('text-anchor', 'middle')
 
     seat.addEventListener('click', handleClick)
@@ -50,3 +53,23 @@ lines.forEach((line, i) => {
     line.appendChild(elText);
   })
 })
+
+elScroll.addEventListener('scroll', e => {
+  const realWidth = 600;
+  const miniWidth = 140; //elMinimap.clientWidth
+  const percentLeft = e.target.scrollLeft / (realWidth + elScroll.clientWidth)
+
+  const miniLeft = miniWidth * percentLeft
+  renderThumb(miniLeft)
+})
+
+window.addEventListener('resize', () => renderThumb(0))
+
+const renderThumb = (left) => {
+  const realWidth = 600;
+  const viewportScale = elScroll.clientWidth / realWidth
+  elThumb.style.width = `${viewportScale * 100}px`
+  elThumb.style.left = `${left}px`
+}
+
+renderThumb(0)
